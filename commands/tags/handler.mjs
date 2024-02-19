@@ -1,22 +1,28 @@
-import { Octokit } from '@octokit/rest';
-import chalk from 'chalk';
-import ora from 'ora';
-import { listCommitsBetween, listBranches, listCommits, listPRs, listRepos, listTags } from '../helpers.mjs';
-import { sortBy } from 'lodash-es';
+import { Octokit } from '@octokit/rest'
+import { cliui } from '@poppinss/cliui'
+import { listCommitsBetween, listRepos, listTags } from '../helpers.mjs'
 
-export default async function run(argv) {
-  const { token, organization } = argv;
+export default async function run (argv) {
+  const ui = cliui()
+  const { token } = argv
 
   const octo = new Octokit({
     auth: token
-  });
+  })
 
-  const spinner = ora(`Fetching ${organization || 'your'} repos...`).start();
-  const repos = await listRepos(argv, octo);
+  const spinner = ui.logger.await('Fetching repositories')
+  spinner.start()
 
-  spinner.succeed(`Fetched ${repos.length} repositories.`);
+  const repos = await listRepos(argv, octo)
+  spinner.update(`✅ Fetched ${repos.length} repositories! Fetching tags`)
 
-  const longestNameLength = sortBy(repos, r => r.full_name.length).slice(-1)[0].full_name.length + 5;
+  const table = ui.table()
+    .head([
+      ui.colors.bold('Repository'),
+      ui.colors.bold('Latest tag'),
+      ui.colors.bold('Status')
+    ])
+
   for (const repo of repos) {
     const tags = await listTags(argv, octo, {
       owner: repo.owner.login,
@@ -24,28 +30,31 @@ export default async function run(argv) {
     })
 
     if (!tags.length) {
-      console.log(
-        `📚 ${repo.full_name}`.padEnd(longestNameLength, ' ') + '| no tags'
-      );
-      continue;
+      table.row([
+        ui.colors.gray(repo.full_name),
+        ui.colors.gray('NO TAGS'),
+        ''
+      ])
+      continue
     }
 
-    const latestTag = tags[0];
+    const latestTag = tags[0]
 
-    const { name, commit } = latestTag;
-    const { sha, url: commitUrl } = commit;
-
+    const { name, commit } = latestTag
+    const { sha, url: commitUrl } = commit
 
     const commitsBetween = await listCommitsBetween(argv, octo, {
       owner: repo.owner.login,
-      repo: repo.name,
+      repo: repo.name
     }, sha)
 
-    console.log(chalk.white(
-      `📚 ${repo.full_name}`.padEnd(longestNameLength, ' ')
-      + '| ' + chalk.bold.green(name)
-      + (commitsBetween.length ? ` {tag > ${chalk.red('+' + commitsBetween.length)} > main}` : ` {tag ${chalk.blue('=')} main}`)
-      + (argv.showUrls ? chalk.italic(` (${commitUrl})`) : ''))
-    );
+    table.row([
+      repo.full_name + (argv.showUrls ? `\n${ui.colors.gray(commitUrl)}` : ''),
+      commitsBetween.length ? ui.colors.yellow(name) : ui.colors.green(name),
+      (commitsBetween.length ? `${ui.colors.yellow(`{tag > +${commitsBetween.length} > main}`)}` : ui.colors.green('{tag = main}'))
+    ])
   }
+
+  spinner.stop()
+  table.render()
 }
