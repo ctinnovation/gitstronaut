@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.mjs",
   "type": "module",
+  "bin": "cli.mjs",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "test": "exit 0",
     "version": "git branch -D 'release_'$npm_package_version || true && git checkout -b 'release_'$npm_package_version && changelogger -p && git add .",

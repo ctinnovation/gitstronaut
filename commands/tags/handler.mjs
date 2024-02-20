@@ -21,9 +21,15 @@ export default async function run (argv) {
 
   for await (const response of iterateRepos(argv, octo)) {
     for (const repo of response.data) {
+      const filterRegex = new RegExp(argv.filter)
+      if (argv.filter && !(filterRegex.test(repo.name))) {
+        continue
+      }
+
       const tags = await listTags(argv, octo, {
         owner: repo.owner.login,
-        repo: repo.name
+        repo: repo.name,
+        per_page: 2
       })
 
       if (!tags.length) {
