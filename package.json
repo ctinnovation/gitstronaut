@@ -1,11 +1,13 @@
 {
   "name": "gitstronaut",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "exit 0"
+    "test": "exit 0",
+    "version": "git branch -D 'release_'$npm_package_version || true && git checkout -b 'release_'$npm_package_version && changelogger -p && git add .",
+    "postversion": "git commit -mv$npm_package_version && git push --set-upstream origin 'release_'$npm_package_version"
   },
   "repository": {
     "type": "git",

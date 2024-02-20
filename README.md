@@ -4,6 +4,15 @@
 
 Have a lot of packages on your GitHub account? Explore them smoothly with gitstronaut 🚀
 
+### Installation
+
+This tool needs [NodeJS](https://nodejs.org/en) and it is tested with node version `20.X`.
+
+```bash
+npm i -g gitstronaut
+gitstronaut explore
+```
+
 ### Authentication
 
 There are two ways to authenticate with this CLI:
