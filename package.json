@@ -1,0 +1,45 @@
+{
+  "name": "gitstronaut",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "exit 0",
+    "version": "git branch -D 'release_'$npm_package_version || true && git checkout -b 'release_'$npm_package_version && changelogger -p && git add .",
+    "postversion": "git commit -mv$npm_package_version && git push --set-upstream origin 'release_'$npm_package_version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctinnovation/gitstronaut.git"
+  },
+  "keywords": [
+    "git",
+    "explore",
+    "astronaut",
+    "gitexplorer"
+  ],
+  "author": "giovanni-bertoncelli",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ctinnovation/gitstronaut/issues"
+  },
+  "homepage": "https://github.com/ctinnovation/gitstronaut#readme",
+  "dependencies": {
+    "@octokit/auth-oauth-device": "^6.0.1",
+    "@octokit/rest": "^20.0.2",
+    "@poppinss/cliui": "^6.4.0",
+    "clipboardy": "^4.0.0",
+    "octokit-auth-oauth-user-client": "^0.1.6",
+    "open": "^10.0.3",
+    "semver": "^7.6.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1"
+  }
+}
