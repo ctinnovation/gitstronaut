@@ -54,7 +54,7 @@ export async function printRepo (argv, octo, repo, {
 function printBranches (ui, argv, repo, { branches = [] }) {
   const unprotectedBranches = branches.filter(b => !b.protected)
   const protectedBranches = branches.filter(b => b.protected)
-  const mainBranches = branches.filter(b => /main|master/i.test(b.name) && b.protected)
+  const mainBranches = branches.filter(b => b.name === repo.default_branch && b.protected)
 
   console.log(ui.colors.bold('Branches'))
 
@@ -71,7 +71,7 @@ function printBranches (ui, argv, repo, { branches = [] }) {
     table.row([
     `${ui.colors.blue(branch.name)}${(argv.showUrls && ('\n' + ui.colors.gray(branch.commit.url))) || ''}`,
     branch.protected ? '✅' : '❌',
-    /main|master/i.test(branch.name) ? ui.colors.green('OK') : ui.colors.yellow('PENDING')
+    branch.name === repo.default_branch ? ui.colors.green('OK') : ui.colors.yellow('PENDING')
     ])
   }
 

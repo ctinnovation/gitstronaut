@@ -19,36 +19,38 @@ export default async function run (argv) {
       ui.colors.bold('Status')
     ])
 
-  for await (const repo of iterateRepos(argv, octo)) {
-    const tags = await listTags(argv, octo, {
-      owner: repo.owner.login,
-      repo: repo.name
-    })
+  for await (const response of iterateRepos(argv, octo)) {
+    for (const repo of response.data) {
+      const tags = await listTags(argv, octo, {
+        owner: repo.owner.login,
+        repo: repo.name
+      })
 
-    if (!tags.length) {
+      if (!tags.length) {
+        table.row([
+          ui.colors.gray(repo.full_name),
+          ui.colors.gray('NO TAGS'),
+          ''
+        ])
+        continue
+      }
+
+      const latestTag = tags[0]
+
+      const { name, commit } = latestTag
+      const { sha, url: commitUrl } = commit
+
+      const commitsBetween = await listCommitsBetween(argv, octo, {
+        owner: repo.owner.login,
+        repo: repo.name
+      }, sha, repo.default_branch)
+
       table.row([
-        ui.colors.gray(repo.full_name),
-        ui.colors.gray('NO TAGS'),
-        ''
+        repo.full_name + (argv.showUrls ? `\n${ui.colors.gray(commitUrl)}` : ''),
+        commitsBetween.length ? ui.colors.yellow(name) : ui.colors.green(name),
+        (commitsBetween.length ? `${ui.colors.yellow(`{tag > +${commitsBetween.length} > main}`)}` : ui.colors.green('{tag = main}'))
       ])
-      continue
     }
-
-    const latestTag = tags[0]
-
-    const { name, commit } = latestTag
-    const { sha, url: commitUrl } = commit
-
-    const commitsBetween = await listCommitsBetween(argv, octo, {
-      owner: repo.owner.login,
-      repo: repo.name
-    }, sha, repo.default_branch)
-
-    table.row([
-      repo.full_name + (argv.showUrls ? `\n${ui.colors.gray(commitUrl)}` : ''),
-      commitsBetween.length ? ui.colors.yellow(name) : ui.colors.green(name),
-      (commitsBetween.length ? `${ui.colors.yellow(`{tag > +${commitsBetween.length} > main}`)}` : ui.colors.green('{tag = main}'))
-    ])
   }
 
   spinner.stop()
