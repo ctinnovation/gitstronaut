@@ -24,8 +24,13 @@
   },
   "homepage": "https://github.com/ctinnovation/gitstronaut#readme",
   "dependencies": {
+    "@octokit/auth-oauth-device": "^6.0.1",
     "@octokit/rest": "^20.0.2",
     "@poppinss/cliui": "^6.4.0",
+    "clipboardy": "^4.0.0",
+    "octokit-auth-oauth-user-client": "^0.1.6",
+    "open": "^10.0.3",
+    "semver": "^7.6.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

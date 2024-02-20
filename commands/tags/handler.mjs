@@ -1,20 +1,16 @@
-import { Octokit } from '@octokit/rest'
 import { cliui } from '@poppinss/cliui'
-import { listCommitsBetween, listRepos, listTags } from '../helpers.mjs'
+import { iterateRepos, listCommitsBetween, listTags } from '../api.mjs'
+import { buildOcto } from '../octokit.mjs'
+import { printHome } from '../print.mjs'
 
 export default async function run (argv) {
+  printHome()
+
   const ui = cliui()
-  const { token } = argv
 
-  const octo = new Octokit({
-    auth: token
-  })
-
+  const octo = await buildOcto(argv)
   const spinner = ui.logger.await('Fetching repositories')
   spinner.start()
-
-  const repos = await listRepos(argv, octo)
-  spinner.update(`✅ Fetched ${repos.length} repositories! Fetching tags`)
 
   const table = ui.table()
     .head([
@@ -23,7 +19,7 @@ export default async function run (argv) {
       ui.colors.bold('Status')
     ])
 
-  for (const repo of repos) {
+  for await (const repo of iterateRepos(argv, octo)) {
     const tags = await listTags(argv, octo, {
       owner: repo.owner.login,
       repo: repo.name
@@ -46,7 +42,7 @@ export default async function run (argv) {
     const commitsBetween = await listCommitsBetween(argv, octo, {
       owner: repo.owner.login,
       repo: repo.name
-    }, sha)
+    }, sha, repo.default_branch)
 
     table.row([
       repo.full_name + (argv.showUrls ? `\n${ui.colors.gray(commitUrl)}` : ''),
