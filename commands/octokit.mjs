@@ -4,7 +4,7 @@ import { createOAuthDeviceAuth } from '@octokit/auth-oauth-device'
 import { cliui } from '@poppinss/cliui'
 import clipboard from 'clipboardy'
 
-const CLIENT_ID = 'bc3fdd35127e3ccb4497'
+const CLIENT_ID = '8f5a81cdc1a8addf100b'
 class Deferred {
   constructor () {
     this.promise = new Promise((resolve, reject) => {

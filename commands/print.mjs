@@ -45,13 +45,13 @@ export async function printRepo (argv, octo, repo, {
 
   sticker.render()
 
-  printBranches(ui, argv, repo, { branches })
+  printBranches(ui, argv, repo, { branches, prs })
   printPrs(ui, argv, repo, { prs })
   await printTags(ui, argv, octo, repo, { tags, commitsUntilLatestTag })
   console.log('\n\n')
 }
 
-function printBranches (ui, argv, repo, { branches = [] }) {
+function printBranches (ui, argv, repo, { branches = [], prs = [] }) {
   const unprotectedBranches = branches.filter(b => !b.protected)
   const protectedBranches = branches.filter(b => b.protected)
   const mainBranches = branches.filter(b => b.name === repo.default_branch && b.protected)
@@ -65,13 +65,14 @@ function printBranches (ui, argv, repo, { branches = [] }) {
   ui.logger.info(`there are ${ui.colors.bold(protectedBranches.length)} protected branches and ${mainBranches.length} main branch`)
 
   const table = ui.table()
-    .head(['Branch name', 'Protected?', 'Status'])
+    .head(['Branch name', 'Protected?', 'PR open?'])
 
   for (const branch of branches) {
+    const openPrs = prs.filter(p => p.head.ref === branch.name)
     table.row([
-    `${ui.colors.blue(branch.name)}${(argv.showUrls && ('\n' + ui.colors.gray(branch.commit.url))) || ''}`,
+    `${ui.colors.blue(branch.name) + (branch.name === repo.default_branch ? ui.colors.gray(' (default)') : '')}${(argv.showUrls && ('\n' + ui.colors.gray(branch.commit.url))) || ''}`,
     branch.protected ? '✅' : '❌',
-    branch.name === repo.default_branch ? ui.colors.green('OK') : ui.colors.yellow('PENDING')
+    openPrs && openPrs.length ? `#${openPrs[0].number}` : ''
     ])
   }
 
@@ -91,7 +92,7 @@ function printPrs (ui, argv, repo, { prs = [] }) {
 
     for (const pr of prs) {
       table.row([
-        `# ${pr.number}`,
+        `#${pr.number}`,
         `${ui.colors.blue(pr.title)}(${(argv.showUrls && ('\n' + ui.colors.grey(pr.url))) || ''})`,
         ui.colors.yellow('OPEN')
       ])
@@ -141,13 +142,13 @@ async function printUnalignedRepo (ui, argv, repo, {
       repo: repo.name,
       path: 'unreleased'
     }, repo.default_branch)
-
-    if (!unreleasedEntries.length) {
-      throw new Error('unreleased/ is not a dir or is empty')
-    }
   } catch (e) {
-    ui.logger.debug(e)
-    ui.logger.debug('unable to get any information about next release')
+    ui.logger.info('unable to get any information about next release')
+    ui.logger.info(ui.colors.gray('💡 are you using https://github.com/ctinnovation/changelogger?'))
+    return
+  }
+
+  if (!unreleasedEntries.length) {
     return
   }
 

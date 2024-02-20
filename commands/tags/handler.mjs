@@ -22,7 +22,7 @@ export default async function run (argv) {
   for await (const response of iterateRepos(argv, octo)) {
     for (const repo of response.data) {
       const filterRegex = new RegExp(argv.filter)
-      if (argv.filter && !(filterRegex.test(repo.name))) {
+      if (argv.filter && !(filterRegex.test(repo.full_name))) {
         continue
       }
 
