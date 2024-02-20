@@ -142,13 +142,13 @@ async function printUnalignedRepo (ui, argv, repo, {
       repo: repo.name,
       path: 'unreleased'
     }, repo.default_branch)
-
-    if (!unreleasedEntries.length) {
-      throw new Error('unreleased/ is not a dir or is empty')
-    }
   } catch (e) {
-    ui.logger.debug(e)
-    ui.logger.debug('unable to get any information about next release')
+    ui.logger.info('unable to get any information about next release')
+    ui.logger.info(ui.colors.gray('💡 are you using https://github.com/ctinnovation/changelogger?'))
+    return
+  }
+
+  if (!unreleasedEntries.length) {
     return
   }
 
