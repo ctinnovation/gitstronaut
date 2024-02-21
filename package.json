@@ -21,7 +21,17 @@
     "git",
     "explore",
     "astronaut",
-    "gitexplorer"
+    "gitexplorer",
+    "github",
+    "gitstronaut",
+    "github explorer",
+    "explorer",
+    "space",
+    "project",
+    "management"
+  ],
+  "contributors": [
+    "giovanni-bertoncelli"
   ],
   "author": "giovanni-bertoncelli",
   "license": "GPL-3.0-or-later",
