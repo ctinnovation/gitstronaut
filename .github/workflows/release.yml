@@ -21,18 +21,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.REPO_ACCESS }}
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          registry-url: https://npm.pkg.github.com/
-          scope: "@ctinnovation"
 
       - name: install dependencies
-        run: npm install -g @ctinnovation/changelogger
+        run: npm install -g changescribe
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_GET_TOKEN}}
 
@@ -54,7 +50,7 @@ jobs:
 
       - name: Create pull request
         id: pr-create
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ github.token }}
           script: |
@@ -70,7 +66,7 @@ jobs:
             return res.data.number;
 
       - name: Request and assign review
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ github.token }}
           script: |
@@ -99,8 +95,6 @@ jobs:
       - name: Checkout
         if: "${{ env.TAG }}"
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.REPO_ACCESS }}
 
       - name: Tagging
         if: "${{ env.TAG }}"
@@ -110,7 +104,7 @@ jobs:
 
       - name: Create and publish release on tag
         if: "${{ env.TAG }}"
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ github.token }}
           script: |
@@ -121,6 +115,13 @@ jobs:
               target_commitish: "${{ github.sha}}",
               name: "${{ env.TAG }}"
             })
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+          always-auth: "true"
 
       - name: NPM package publish
         if: "${{ env.TAG }}"

@@ -144,7 +144,7 @@ async function printUnalignedRepo (ui, argv, repo, {
     }, repo.default_branch)
   } catch (e) {
     ui.logger.info('unable to get any information about next release')
-    ui.logger.info(ui.colors.gray('💡 are you using https://github.com/ctinnovation/changelogger?'))
+    ui.logger.info(ui.colors.gray('💡 are you using https://github.com/ctinnovation/changescribe?'))
     return
   }
 

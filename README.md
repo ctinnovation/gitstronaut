@@ -35,7 +35,7 @@ With explore, for each repository, gitstronaut will give you information about:
 - Pull requests: warning you about Pull Requests that are open and not merged
 - Tags: warning you when the default branch is not aligned with the latest tag (and how many commits are between the two)
 
-If you're using [changelogger](https://github.com/ctinnovation/changelogger) for handling your CHANGELOGs gitstronaut will also hint you the likely next release needed for that repo.
+If you're using [changescribe](https://github.com/ctinnovation/changescribe) for handling your CHANGELOGs gitstronaut will also hint you the likely next release needed for that repo.
 
 ### Tags
 

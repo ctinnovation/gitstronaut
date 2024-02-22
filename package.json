@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "exit 0",
-    "version": "git branch -D 'release_'$npm_package_version || true && git checkout -b 'release_'$npm_package_version && changelogger -p && git add .",
+    "version": "git branch -D 'release_'$npm_package_version || true && git checkout -b 'release_'$npm_package_version && changescribe && git add .",
     "postversion": "git commit -mv$npm_package_version && git push --set-upstream origin 'release_'$npm_package_version"
   },
   "repository": {
