@@ -29,8 +29,6 @@ jobs:
 
       - name: install dependencies
         run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_GET_TOKEN}}
 
       - name: setup git config
         run: |
