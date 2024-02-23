@@ -50,6 +50,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "changescribe": "^3.0.4",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
